@@ -325,22 +325,27 @@ class _CropAnalysisScreenState extends State<CropAnalysisScreen> {
         language: _currentLanguage,
       );
 
-      // Save to history
-      final savedImagePath = await _storageService.saveImage(_selectedImage!);
-      await _storageService.saveQuery(
-        QueryHistory(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          imagePath: savedImagePath,
-          question: _questionController.text,
-          answer: result['analysis'] ?? '',
-          language: _currentLanguage,
-          timestamp: DateTime.now(),
-          confidence: result['confidence']?.toDouble(),
-          recommendations: result['recommendations'] != null
-              ? List<String>.from(result['recommendations'])
-              : null,
-        ),
-      );
+      // Save to history (skip on web platform as it uses file storage)
+      try {
+        final savedImagePath = await _storageService.saveImage(_selectedImage!);
+        await _storageService.saveQuery(
+          QueryHistory(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            imagePath: savedImagePath,
+            question: _questionController.text,
+            answer: result['analysis'] ?? '',
+            language: _currentLanguage,
+            timestamp: DateTime.now(),
+            confidence: result['confidence']?.toDouble(),
+            recommendations: result['recommendations'] != null
+                ? List<String>.from(result['recommendations'])
+                : null,
+          ),
+        );
+      } catch (e) {
+        // Ignore storage errors on web platform
+        print('Storage not available (web platform): $e');
+      }
 
       setState(() {
         _analysisResult = result;
