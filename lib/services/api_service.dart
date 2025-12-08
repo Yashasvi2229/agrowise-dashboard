@@ -49,14 +49,18 @@ class ApiService {
     String question,
     String language
   ) {
-    // API returns: predicted_class, predicted_crop, predicted_diseases, confidence_percentage
+    // API returns: predicted_class, predicted_crop, predicted_diseases, confidence_percentage, recommendations
     String crop = apiResponse['predicted_crop'] ?? 'Unknown';
     String disease = apiResponse['predicted_diseases'] ?? 'Unknown';
     double confidence = (apiResponse['confidence_percentage'] ?? 0) / 100.0;
     
+    // Use LLM-generated recommendations from API response
+    List<String> recommendations = apiResponse['recommendations'] != null 
+        ? List<String>.from(apiResponse['recommendations'])
+        : _generateRecommendations(crop, disease, language);  // Fallback to generic if API doesn't provide
+    
     // Generate analysis text based on language
     String analysis = _generateAnalysisText(crop, disease, language);
-    List<String> recommendations = _generateRecommendations(crop, disease, language);
     
     return {
       'analysis': analysis,
