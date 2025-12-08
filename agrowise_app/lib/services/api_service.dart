@@ -12,14 +12,12 @@ class ApiService {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.analyzeCropEndpoint}'),
+        Uri.parse('${ApiConfig.cropDiseaseApiUrl}${ApiConfig.cropDiseaseEndpoint}'),
       );
 
-      request.fields['question'] = question;
-      request.fields['language'] = language;
-
+      // Crop disease API expects 'file' parameter
       var multipartFile = await http.MultipartFile.fromPath(
-        'image',
+        'file',
         imageFile.path,
       );
       request.files.add(multipartFile);
@@ -28,7 +26,10 @@ class ApiService {
       var response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        var apiResponse = json.decode(response.body);
+        
+        // Transform API response to our app's format
+        return _transformCropDiseaseResponse(apiResponse, question, language);
       } else {
         return _getDemoCropResponse(question, language);
       }
@@ -37,30 +38,90 @@ class ApiService {
     }
   }
 
+  Map<String, dynamic> _transformCropDiseaseResponse(
+    Map<String, dynamic> apiResponse, 
+    String question,
+    String language
+  ) {
+    // API returns: predicted_class, predicted_crop, predicted_diseases, confidence_percentage
+    String crop = apiResponse['predicted_crop'] ?? 'Unknown';
+    String disease = apiResponse['predicted_diseases'] ?? 'Unknown';
+    double confidence = (apiResponse['confidence_percentage'] ?? 0) / 100.0;
+    
+    // Generate analysis text based on language
+    String analysis = _generateAnalysisText(crop, disease, language);
+    List<String> recommendations = _generateRecommendations(crop, disease, language);
+    
+    return {
+      'analysis': analysis,
+      'confidence': confidence,
+      'recommendations': recommendations,
+      'crop_type': crop,
+      'disease_detected': disease,
+    };
+  }
+
+  String _generateAnalysisText(String crop, String disease, String language) {
+    final templates = {
+      'en': 'Detected: $crop affected by $disease. This is a common disease that affects crop health and yield. Immediate action is recommended to prevent spread.',
+      'hi': 'पता लगाया: $crop $disease से प्रभावित। यह एक सामान्य रोग है जो फसल स्वास्थ्य और उपज को प्रभावित करता है। प्रसार को रोकने के लिए तत्काल कार्रवाई की सिफारिश की जाती है।',
+      'ta': 'கண்டறியப்பட்டது: $crop $disease ஆல் பாதிக்கப்பட்டுள்ளது. இது பயிர் ஆரோக்கியம் மற்றும் விளைச்சலை பாதிக்கும் பொதுவான நோய். பரவலைத் தடுக்க உடனடி நடவடிக்கை பரிந்துரைக்கப்படுகிறது.',
+      'te': 'గుర్తించబడింది: $crop $disease ద్వారా ప్రభావితమైంది. ఇది పంట ఆరోగ్యం మరియు దిగుబడిని ప్రభావితం చేసే సాధారణ వ్యాధి. వ్యాప్తిని నిరోధించడానికి తక్షణ చర్య సిఫార్సు చేయబడింది.',
+    };
+    return templates[language] ?? templates['en']!;
+  }
+
+  List<String> _generateRecommendations(String crop, String disease, String language) {
+    final recommendations = {
+      'en': [
+        'Remove and destroy infected plant parts immediately',
+        'Apply appropriate fungicide or pesticide as recommended',
+        'Improve air circulation between plants',
+        'Avoid overhead watering to reduce moisture on leaves',
+        'Monitor neighboring plants for similar symptoms',
+        'Consult local agricultural extension officer for treatment',
+      ],
+      'hi': [
+        'संक्रमित पौधों के भागों को तुरंत हटा दें और नष्ट कर दें',
+        'अनुशंसित फ़ंगसाइड या कीटनाशक लगाएं',
+        'पौधों के बीच वायु संचलन में सुधार करें',
+        'पत्तियों पर नमी कम करने के लिए ऊपरी सिंचाई से बचें',
+        'समान लक्षणों के लिए पड़ोसी पौधों की निगरानी करें',
+        'उपचार के लिए स्थानीय कृषि विस्तार अधिकारी से परामर्श करें',
+      ],
+    };
+    return recommendations[language] ?? recommendations['en']!;
+  }
+
   Map<String, dynamic> _getDemoCropResponse(String question, String language) {
     final responses = {
       'en': {
-        'analysis': '🌾 Demo Mode: Your question was "$question". This is a sample crop analysis. In production, AgroWise AI would analyze the crop image and provide detailed insights about crop health, disease detection, nutrient deficiencies, and treatment recommendations.',
-        'confidence': 0.85,
+        'analysis': '🌾 Demo Mode: Crop Disease Detector API not running. This is a sample response. In production, the AI would analyze the image and detect specific crop diseases with high accuracy. Start the crop disease detector API at http://127.0.0.1:8000',
+        'confidence': 0.75,
         'recommendations': [
-          'Connect backend server for real AI analysis',
+          'Start crop disease detector API locally',
           'Ensure good image quality with proper lighting',
-          'Focus on affected crop areas for better detection'
-        ]
+          'Focus camera on affected crop areas',
+        ],
+        'crop_type': 'Demo Crop',
+        'disease_detected': 'Sample Disease',
       },
       'hi': {
-        'analysis': '🌾 डेमो मोड: आपका प्रश्न था "$question"। यह एक नमूना फसल विश्लेषण है। उत्पादन में, AgroWise AI फसल छवि का विश्लेषण करेगी और फसल स्वास्थ्य, रोग पहचान, पोषक तत्वों की कमी और उपचार अनुशंसाओं के बारे में विस्तृत जानकारी प्रदान करेगी।',
-        'confidence': 0.85,
+        'analysis': '🌾 डेमो मोड: क्रॉप डिजीज डिटेक्टर API नहीं चल रहा है। यह एक नमूना प्रतिक्रिया है। उत्पादन में, AI छवि का विश्लेषण करेगी और उच्च सटीकता के साथ विशिष्ट फसल रोगों का पता लगाएगी। http://127.0.0.1:8000 पर क्रॉप डिजीज डिटेक्टर API शुरू करें',
+        'confidence': 0.75,
         'recommendations': [
-          'वास्तविक AI विश्लेषण के लिए बैकएंड सर्वर कनेक्ट करें',
+          'स्थानीय रूप से क्रॉप डिजीज डिटेक्टर API शुरू करें',
           'उचित प्रकाश के साथ अच्छी छवि गुणवत्ता सुनिश्चित करें',
-          'बेहतर पहचान के लिए प्रभावित फसल क्षेत्रों पर ध्यान दें'
-        ]
+          'प्रभावित फसल क्षेत्रों पर कैमरा फोकस करें',
+        ],
+        'crop_type': 'डेमो फसल',
+        'disease_detected': 'नमूना रोग',
       },
     };
     
     return responses[language] ?? responses['en']!;
   }
+
 
   Future<Map<String, dynamic>> askQuestion({
     required String question,

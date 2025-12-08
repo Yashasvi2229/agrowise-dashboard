@@ -127,24 +127,32 @@ class _CropAnalysisScreenState extends State<CropAnalysisScreen> {
         children: [
           const Icon(Icons.add_photo_alternate, size: 80, color: Color(0xFF2E7D32)),
           const SizedBox(height: 20),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton.icon(
-                onPressed: () => _pickImage(ImageSource.camera),
-                icon: const Icon(Icons.camera_alt),
-                label: Text(localizations.translate('take_photo')),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+              SizedBox(
+                width: 250,
+                child: ElevatedButton.icon(
+                  onPressed: () => _pickImage(ImageSource.camera),
+                  icon: const Icon(Icons.camera_alt),
+                  label: Text(localizations.translate('take_photo')),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2E7D32),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
-              const SizedBox(width: 16),
-              ElevatedButton.icon(
-                onPressed: () => _pickImage(ImageSource.gallery),
-                icon: const Icon(Icons.photo_library),
-                label: Text(localizations.translate('choose_gallery')),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5D4037),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: 250,
+                child: ElevatedButton.icon(
+                  onPressed: () => _pickImage(ImageSource.gallery),
+                  icon: const Icon(Icons.photo_library),
+                  label: Text(localizations.translate('choose_gallery')),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5D4037),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
             ],
