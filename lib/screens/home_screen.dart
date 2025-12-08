@@ -94,6 +94,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              PopupMenuItem(
+                value: 'pa',
+                child: Row(
+                  children: [
+                    if (_currentLanguage == 'pa') const Icon(Icons.check, color: Color(0xFF2E7D32)),
+                    if (_currentLanguage == 'pa') const SizedBox(width: 8),
+                    Text(localizations.translate('punjabi'), style: const TextStyle(fontSize: 18)),
+                  ],
+                ),
+              ),
             ],
           ),
         ],

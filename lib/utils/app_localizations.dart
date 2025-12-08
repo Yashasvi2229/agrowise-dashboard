@@ -25,6 +25,7 @@ class AppLocalizations {
       'hindi': 'हिंदी (Hindi)',
       'tamil': 'தமிழ் (Tamil)',
       'telugu': 'తెలుగు (Telugu)',
+      'punjabi': 'ਪੰਜਾਬੀ (Punjabi)',
       'take_photo': 'Take Photo',
       'choose_gallery': 'Choose from Gallery',
       'cancel': 'Cancel',
@@ -58,6 +59,7 @@ class AppLocalizations {
       'hindi': 'हिंदी (Hindi)',
       'tamil': 'தமிழ் (Tamil)',
       'telugu': 'తెలుగు (Telugu)',
+      'punjabi': 'ਪੰਜਾਬੀ (Punjabi)',
       'take_photo': 'फोटो लें',
       'choose_gallery': 'गैलरी से चुनें',
       'cancel': 'रद्द करें',
@@ -91,6 +93,7 @@ class AppLocalizations {
       'hindi': 'हिंदी (Hindi)',
       'tamil': 'தமிழ் (Tamil)',
       'telugu': 'తెలుగు (Telugu)',
+      'punjabi': 'ਪੰਜਾਬੀ (Punjabi)',
       'take_photo': 'புகைப்படம் எடுக்கவும்',
       'choose_gallery': 'கேலரியில் இருந்து தேர்வு செய்க',
       'cancel': 'ரத்து செய்',
@@ -124,6 +127,7 @@ class AppLocalizations {
       'hindi': 'हिंदी (Hindi)',
       'tamil': 'தமிழ் (Tamil)',
       'telugu': 'తెలుగు (Telugu)',
+      'punjabi': 'ਪੰਜਾਬੀ (Punjabi)',
       'take_photo': 'ఫోటో తీయండి',
       'choose_gallery': 'గ్యాలరీ నుండి ఎంచుకోండి',
       'cancel': 'రద్దు చేయండి',
@@ -144,6 +148,40 @@ class AppLocalizations {
       'helpline_number': '+18557746931',
       'helpline_description': 'తెలుగు, హిందీ, తమిళం లేదా ఆంగ్లంలో మా AI సహాయకుడితో మాట్లాడండి',
     },
+    'pa': {
+      'app_title': 'ਐਗਰੋਵਾਈਜ਼',
+      'home_title': 'ਐਗਰੋਵਾਈਜ਼ - ਤੁਹਾਡਾ ਖੇਤੀ ਸਹਾਇਕ',
+      'analyze_crop': 'ਫਸਲ ਫੋਟੋ ਵਿਸ਼ਲੇਸ਼ਣ',
+      'ask_question': 'ਸਵਾਲ ਪੁੱਛੋ',
+      'call_helpline': 'ਹੈਲਪਲਾਈਨ ਤੇ ਕਾਲ ਕਰੋ',
+      'history': 'ਇਤਿਹਾਸ',
+      'settings': 'ਸੈਟਿੰਗਾਂ',
+      'select_language': 'ਭਾਸ਼ਾ ਚੁਣੋ',
+      'english': 'English',
+      'hindi': 'हिंदी (Hindi)',
+      'tamil': 'தமிழ் (Tamil)',
+      'telugu': 'తెలుగు (Telugu)',
+      'punjabi': 'ਪੰਜਾਬੀ (Punjabi)',
+      'take_photo': 'ਫੋਟੋ ਲਓ',
+      'choose_gallery': 'ਗੈਲਰੀ ਤੋਂ ਚੁਣੋ',
+      'cancel': 'ਰੱਦ ਕਰੋ',
+      'enter_question': 'ਤੁਸੀਂ ਇਸ ਫਸਲ ਬਾਰੇ ਕੀ ਜਾਣਨਾ ਚਾਹੁੰਦੇ ਹੋ?',
+      'send': 'ਭੇਜੋ',
+      'analyzing': 'ਫਸਲ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...',
+      'loading': 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...',
+      'no_internet': 'ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ',
+      'error_occurred': 'ਇੱਕ ਗਲਤੀ ਹੋਈ',
+      'try_again': 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+      'previous_queries': 'ਪਿਛਲੇ ਸਵਾਲ',
+      'no_history': 'ਕੋਈ ਪਿਛਲੇ ਸਵਾਲ ਨਹੀਂ',
+      'saved_recommendations': 'ਸੰਭਾਲੀਆਂ ਸਿਫਾਰਸ਼ਾਂ',
+      'confidence': 'ਵਿਸ਼ਵਾਸ',
+      'recommendations': 'ਸਿਫਾਰਸ਼ਾਂ',
+      'chat_placeholder': 'ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਲਿਖੋ...',
+      'call_now': 'ਹੁਣੇ ਕਾਲ ਕਰੋ',
+      'helpline_number': '+18557746931',
+      'helpline_description': 'ਪੰਜਾਬੀ, ਹਿੰਦੀ, ਤਮਿਲ, ਤੇਲਗੂ ਜਾਂ ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਸਾਡੇ AI ਸਹਾਇਕ ਨਾਲ ਗੱਲ ਕਰੋ',
+    },
   };
 
   String translate(String key) {
@@ -156,7 +194,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   @override
   bool isSupported(Locale locale) {
-    return ['en', 'hi', 'ta', 'te'].contains(locale.languageCode);
+    return ['en', 'hi', 'ta', 'te', 'pa'].contains(locale.languageCode);
   }
 
   @override
