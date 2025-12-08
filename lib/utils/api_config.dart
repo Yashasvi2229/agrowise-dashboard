@@ -4,7 +4,7 @@ class ApiConfig {
   static const String languagesEndpoint = '/api/languages';
   
   // Crop disease detector API (deployed on Render)
-  static const String cropDiseaseApiUrl = 'https://crop-disease-api-1-wami.onrender.com';
+  static const String cropDiseaseApiUrl = 'https://crop-disease-api-oawi.onrender.com';
   static const String cropDiseaseEndpoint = '/predict';
   
   // Other configs
