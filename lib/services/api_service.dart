@@ -139,7 +139,7 @@ class ApiService {
   }) async {
     try {
       var response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/api/ask'),
+        Uri.parse('${ApiConfig.cropDiseaseApiUrl}/chat'),  // Use Render API for chat
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'question': question,
@@ -150,11 +150,13 @@ class ApiService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        // Return demo response if backend is not available
+        print('Chat API Error: Status ${response.statusCode}');
+        print('Response body: ${response.body}');
         return _getDemoResponse(question, language);
       }
     } catch (e) {
-      // Return demo response if backend is not available
+      print('Chat API Exception: $e');
+      print('API URL: ${ApiConfig.cropDiseaseApiUrl}/chat');
       return _getDemoResponse(question, language);
     }
   }
