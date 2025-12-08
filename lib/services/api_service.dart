@@ -31,9 +31,13 @@ class ApiService {
         // Transform API response to our app's format
         return _transformCropDiseaseResponse(apiResponse, question, language);
       } else {
+        print('Crop Disease API Error: Status ${response.statusCode}');
+        print('Response body: ${response.body}');
         return _getDemoCropResponse(question, language);
       }
     } catch (e) {
+      print('Crop Disease API Exception: $e');
+      print('API URL: ${ApiConfig.cropDiseaseApiUrl}${ApiConfig.cropDiseaseEndpoint}');
       return _getDemoCropResponse(question, language);
     }
   }
