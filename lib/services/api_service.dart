@@ -15,10 +15,12 @@ class ApiService {
         Uri.parse('${ApiConfig.cropDiseaseApiUrl}${ApiConfig.cropDiseaseEndpoint}'),
       );
 
-      // Crop disease API expects 'file' parameter
-      var multipartFile = await http.MultipartFile.fromPath(
+      // For web platform, read file as bytes instead of using path
+      var bytes = await imageFile.readAsBytes();
+      var multipartFile = http.MultipartFile.fromBytes(
         'file',
-        imageFile.path,
+        bytes,
+        filename: 'crop_image.jpg',
       );
       request.files.add(multipartFile);
 
