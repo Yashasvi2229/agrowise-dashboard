@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/market_prices_screen.dart';
 
 class MarketPricesCard extends StatelessWidget {
   const MarketPricesCard({super.key});
@@ -10,9 +11,11 @@ class MarketPricesCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to market prices screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Market Prices - Coming Soon!')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MarketPricesScreen(),
+            ),
           );
         },
         borderRadius: BorderRadius.circular(16),
