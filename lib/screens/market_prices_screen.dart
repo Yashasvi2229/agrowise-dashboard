@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/market_price_service.dart';
 
 class MarketPricesScreen extends StatefulWidget {
   const MarketPricesScreen({super.key});
@@ -9,27 +10,71 @@ class MarketPricesScreen extends StatefulWidget {
 
 class _MarketPricesScreenState extends State<MarketPricesScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final MarketPriceService _marketPriceService = MarketPriceService();
+  
   String _searchQuery = '';
+  List<Map<String, dynamic>> _allCrops = [];
+  bool _loading = true;
 
-  // Sample crop data - will be replaced with real API data
-  final List<Map<String, dynamic>> _crops = [
-    {'name': 'Wheat', 'emoji': '🌾', 'price': 2150, 'unit': 'quintal', 'trend': 'up', 'change': 3},
-    {'name': 'Rice', 'emoji': '🍚', 'price': 3200, 'unit': 'quintal', 'trend': 'up', 'change': 5},
-    {'name': 'Maize', 'emoji': '🌽', 'price': 1850, 'unit': 'quintal', 'trend': 'down', 'change': -2},
-    {'name': 'Tomato', 'emoji': '🍅', 'price': 40, 'unit': 'kg', 'trend': 'stable', 'change': 0},
-    {'name': 'Onion', 'emoji': '🧅', 'price': 35, 'unit': 'kg', 'trend': 'up', 'change': 8},
-    {'name': 'Potato', 'emoji': '🥔', 'price': 25, 'unit': 'kg', 'trend': 'down', 'change': -4},
-    {'name': 'Sugarcane', 'emoji': '🌿', 'price': 350, 'unit': 'quintal', 'trend': 'stable', 'change': 0},
-    {'name': 'Cotton', 'emoji': '☁️', 'price': 6500, 'unit': 'quintal', 'trend': 'up', 'change': 2},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadMarketPrices();
+  }
+
+  Future<void> _loadMarketPrices() async {
+    setState(() {
+      _loading = true;
+    });
+
+    try {
+      final crops = await _marketPriceService.getMarketPrices();
+      setState(() {
+        _allCrops = crops.isNotEmpty ? crops : _marketPriceService.getDemoData();
+        _loading = false;
+      });
+    } catch (e) {
+      print('Error loading market prices: $e');
+      setState(() {
+        _allCrops = _marketPriceService.getDemoData();
+        _loading = false;
+      });
+    }
+  }
 
   List<Map<String, dynamic>> get _filteredCrops {
     if (_searchQuery.isEmpty) {
-      return _crops;
+      return _allCrops;
     }
-    return _crops.where((crop) =>
-        crop['name'].toLowerCase().contains(_searchQuery.toLowerCase())
+    return _allCrops.where((crop) =>
+        crop['name'].toString().toLowerCase().contains(_searchQuery.toLowerCase())
     ).toList();
+  }
+
+  // Get emoji for commodity (simplified mapping)
+  String _getCropEmoji(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('wheat')) return '🌾';
+    if (lowerName.contains('rice') || lowerName.contains('paddy')) return '🍚';
+    if (lowerName.contains('maize') || lowerName.contains('corn')) return '🌽';
+    if (lowerName.contains('tomato')) return '🍅';
+    if (lowerName.contains('onion')) return '🧅';
+    if (lowerName.contains('potato')) return '🥔';
+    if (lowerName.contains('sugarcane') || lowerName.contains('cane')) return '🌿';
+    if (lowerName.contains('cotton')) return '☁️';
+    if (lowerName.contains('soybean') || lowerName.contains('soya')) return '🫘';
+    if (lowerName.contains('groundnut') || lowerName.contains('peanut')) return '🥜';
+    if (lowerName.contains('coconut')) return '🥥';
+    if (lowerName.contains('apple')) return '🍎';
+    if (lowerName.contains('banana')) return '🍌';
+    if (lowerName.contains('mango')) return '🥭';
+    if (lowerName.contains('grape')) return '🍇';
+    if (lowerName.contains('orange')) return '🍊';
+    if (lowerName.contains('chilli') || lowerName.contains('chili') || lowerName.contains('pepper')) return '🌶️';
+    if (lowerName.contains('garlic')) return '🧄';
+    if (lowerName.contains('ginger')) return '🫚';
+    if (lowerName.contains('turmeric')) return '🟡';
+    return '🌱'; // Default for unknown crops
   }
 
   @override
@@ -80,21 +125,44 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
           
           // Crop List
           Expanded(
-            child: _filteredCrops.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No crops found',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _filteredCrops.length,
-                    itemBuilder: (context, index) {
-                      final crop = _filteredCrops[index];
-                      return _buildCropCard(crop);
-                    },
-                  ),
+            child: _loading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredCrops.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.search_off, size: 64, color: Colors.grey),
+                            const SizedBox(height: 16),
+                            Text(
+                              _searchQuery.isEmpty
+                                  ? 'No crops available'
+                                  : 'No crops found',
+                              style: const TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
+                            if (!_searchQuery.isEmpty) ...[
+                              const SizedBox(height: 8),
+                              TextButton(
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {
+                                    _searchQuery = '';
+                                  });
+                                },
+                                child: const Text('Clear search'),
+                              ),
+                            ],
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _filteredCrops.length,
+                        itemBuilder: (context, index) {
+                          final crop = _filteredCrops[index];
+                          return _buildCropCard(crop);
+                        },
+                      ),
           ),
         ],
       ),
@@ -102,15 +170,18 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
   }
 
   Widget _buildCropCard(Map<String, dynamic> crop) {
-    Color trendColor = crop['trend'] == 'up'
+    final String trend = crop['trend'] ?? 'stable';
+    final double change = (crop['change'] ?? 0).toDouble();
+    
+    Color trendColor = trend == 'up'
         ? Colors.green
-        : crop['trend'] == 'down'
+        : trend == 'down'
             ? Colors.red
             : Colors.orange;
 
-    String trendIcon = crop['trend'] == 'up'
+    String trendIcon = trend == 'up'
         ? '📈'
-        : crop['trend'] == 'down'
+        : trend == 'down'
             ? '📉'
             : '➡️';
 
@@ -119,9 +190,15 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to crop detail screen
+          // Show market and state info
+          final market = crop['market'] ?? '';
+          final state = crop['state'] ?? '';
+          final detail = market.isNotEmpty && state.isNotEmpty
+              ? '$market, $state'
+              : crop['name'];
+          
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${crop['name']} details - Coming Soon!')),
+            SnackBar(content: Text(detail)),
           );
         },
         borderRadius: BorderRadius.circular(12),
@@ -131,7 +208,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
             children: [
               // Emoji
               Text(
-                crop['emoji'],
+                _getCropEmoji(crop['name'] ?? ''),
                 style: const TextStyle(fontSize: 40),
               ),
               const SizedBox(width: 16),
@@ -142,7 +219,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      crop['name'],
+                      crop['name'] ?? 'Unknown',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -150,7 +227,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${crop['price']} per ${crop['unit']}',
+                      '₹${crop['price']?.toStringAsFixed(0) ?? '0'} per ${crop['unit'] ?? 'quintal'}',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFF2E7D32),
@@ -171,7 +248,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${crop['change'] > 0 ? '+' : ''}${crop['change']}%',
+                    '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}%',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
