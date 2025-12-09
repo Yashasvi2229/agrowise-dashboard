@@ -129,16 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const SizedBox(height: 10),
                 // Weather Card (replaces logo)
-                WeatherCard(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WeatherDetailScreen(),
-                      ),
-                    );
-                  },
-                ),
+                const WeatherCard(),
                 const SizedBox(height: 30),
                 // Analyze Crop Photo Card  
                 _buildActionCard(

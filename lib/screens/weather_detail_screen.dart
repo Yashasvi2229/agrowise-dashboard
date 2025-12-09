@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
-import '../services/location_service.dart';
 import '../services/weather_service.dart';
 import 'package:intl/intl.dart';
 
 class WeatherDetailScreen extends StatefulWidget {
-  const WeatherDetailScreen({super.key});
+  final double latitude;
+  final double longitude;
+  final String locationName;
+
+  const WeatherDetailScreen({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.locationName,
+  });
 
   @override
   State<WeatherDetailScreen> createState() => _WeatherDetailScreenState();
 }
 
 class _WeatherDetailScreenState extends State<WeatherDetailScreen> {
-  final LocationService _locationService = LocationService();
   final WeatherService _weatherService = WeatherService();
   
   Map<String, dynamic>? _weather;
   List<Map<String, dynamic>> _forecast = [];
-  String? _location;
   bool _loading = true;
 
   @override
@@ -27,28 +33,20 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen> {
 
   Future<void> _loadWeatherData() async {
     try {
-      final locationData = await _locationService.getLocationWithAddress();
-      if (locationData == null) {
-        setState(() {
-          _loading = false;
-        });
-        return;
-      }
-
+      // Use passed location instead of fetching again
       final weather = await _weatherService.getCurrentWeather(
-        locationData['latitude'],
-        locationData['longitude'],
+        widget.latitude,
+        widget.longitude,
       );
 
       final forecast = await _weatherService.get7DayForecast(
-        locationData['latitude'],
-        locationData['longitude'],
+        widget.latitude,
+        widget.longitude,
       );
 
       setState(() {
         _weather = weather;
         _forecast = forecast;
-        _location = '${locationData['locality']}, ${locationData['state']}';
         _loading = false;
       });
     } catch (e) {
@@ -129,7 +127,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen> {
       child: Column(
         children: [
           Text(
-            _location ?? '',
+            widget.locationName,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,

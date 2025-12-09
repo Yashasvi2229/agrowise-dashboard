@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/location_service.dart';
 import '../services/weather_service.dart';
+import '../screens/weather_detail_screen.dart';
 
 class WeatherCard extends StatefulWidget {
-  final VoidCallback onTap;
-
-  const WeatherCard({super.key, required this.onTap});
+  const WeatherCard({super.key});
 
   @override
   State<WeatherCard> createState() => _WeatherCardState();
@@ -17,6 +16,8 @@ class _WeatherCardState extends State<WeatherCard> {
   
   Map<String, dynamic>? _weather;
   String? _location;
+  double? _latitude;
+  double? _longitude;
   bool _loading = true;
 
   @override
@@ -46,6 +47,8 @@ class _WeatherCardState extends State<WeatherCard> {
       setState(() {
         _weather = weather;
         _location = '${locationData['locality']}, ${locationData['state']}';
+        _latitude = locationData['latitude'];
+        _longitude = locationData['longitude'];
         _loading = false;
       });
     } catch (e) {
@@ -74,7 +77,7 @@ class _WeatherCardState extends State<WeatherCard> {
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
-        onTap: widget.onTap,
+        onTap: null,  // No action when loading
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -105,7 +108,7 @@ class _WeatherCardState extends State<WeatherCard> {
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
-        onTap: widget.onTap,
+        onTap: _loadWeather,  // Retry loading weather
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -139,7 +142,21 @@ class _WeatherCardState extends State<WeatherCard> {
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
-        onTap: widget.onTap,
+        onTap: () {
+          // Navigate to detail screen with location data
+          if (_latitude != null && _longitude != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WeatherDetailScreen(
+                  latitude: _latitude!,
+                  longitude: _longitude!,
+                  locationName: _location ?? '',
+                ),
+              ),
+            );
+          }
+        },
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(20),
