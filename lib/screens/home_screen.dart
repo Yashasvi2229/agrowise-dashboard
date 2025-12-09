@@ -9,6 +9,7 @@ import 'chat_screen.dart';
 import 'history_screen.dart';
 import 'weather_detail_screen.dart';
 import '../widgets/weather_card.dart';
+import '../widgets/market_prices_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -147,6 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
+                const SizedBox(height: 20),
+                // Market Prices Card
+                const MarketPricesCard(),
                 const SizedBox(height: 20),
                 // Future features placeholder
                 Expanded(
