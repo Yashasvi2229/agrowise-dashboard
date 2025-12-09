@@ -7,6 +7,8 @@ import '../main.dart';
 import 'crop_analysis_screen.dart';
 import 'chat_screen.dart';
 import 'history_screen.dart';
+import 'weather_detail_screen.dart';
+import '../widgets/weather_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -125,80 +127,86 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 10),
+                // Weather Card (replaces logo)
+                WeatherCard(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WeatherDetailScreen(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 30),
+                // Analyze Crop Photo Card  
+                _buildActionCard(
+                  context,
+                  icon: Icons.camera_alt,
+                  title: localizations.translate('analyze_crop'),
+                  subtitle: 'Take or upload crop photos for AI analysis',
+                  color: const Color(0xFF2E7D32),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CropAnalysisScreen(),
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 20),
-                // App Logo/Title
-                const Icon(
-                  Icons.agriculture,
-                  size: 80,
-                  color: Color(0xFF2E7D32),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  localizations.translate('app_title'),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  localizations.translate('home_title').split(' - ').last,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: const Color(0xFF5D4037),
-                      ),
-                ),
-                const SizedBox(height: 40),
-                // Main Action Buttons
+                // Future features placeholder
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildActionCard(
-                        context,
-                        icon: Icons.camera_alt,
-                        title: localizations.translate('analyze_crop'),
-                        subtitle: 'Take or upload crop photos for AI analysis',
-                        color: const Color(0xFF2E7D32),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CropAnalysisScreen(),
-                            ),
-                          );
-                        },
+                  child: Center(
+                    child: Text(
+                      'More features coming soon!',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 16,
                       ),
-                      const SizedBox(height: 20),
-                      _buildActionCard(
-                        context,
-                        icon: Icons.chat_bubble,
-                        title: localizations.translate('ask_question'),
-                        subtitle: 'Chat with our AI farming expert',
-                        color: const Color(0xFF5D4037),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ChatScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      _buildActionCard(
-                        context,
-                        icon: Icons.phone,
-                        title: localizations.translate('call_helpline'),
-                        subtitle: localizations.translate('helpline_description'),
-                        color: const Color(0xFF1976D2),
-                        onTap: () => _makePhoneCall(context),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+      // Floating Action Buttons
+      floatingActionButton: Stack(
+        children: [
+          // Chat FAB - Bottom Right
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              heroTag: 'chat_fab',
+              backgroundColor: const Color(0xFF5D4037),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChatScreen(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.chat_bubble, color: Colors.white),
+            ),
+          ),
+          // Call FAB - Bottom Left
+          Positioned(
+            bottom: 16,
+            left: 36,
+            child: FloatingActionButton(
+              heroTag: 'call_fab',
+              backgroundColor: const Color(0xFF1976D2),
+              onPressed: () => _makePhoneCall(context),
+              child: const Icon(Icons.phone, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
