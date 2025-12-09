@@ -56,6 +56,7 @@ class _AgroWiseAppState extends State<AgroWiseApp> {
         Locale('hi'),
         Locale('ta'),
         Locale('te'),
+        Locale('pa'),  // Punjabi
       ],
       localizationsDelegates: const [
         AppLocalizations.delegate,
